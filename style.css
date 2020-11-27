@@ -33,6 +33,31 @@
   display: flex;
 }
 
+.submarine-container,
+.cruiser-container {
+  width: 120px;
+  height: 40px;
+  background-color: black;
+  margin: 10px;
+  display: flex;
+}
+
+.battleship-container {
+  width: 160px;
+  height: 40px;
+  background-color: red;
+  margin: 10px;
+  display: flex;
+}
+
+.carrier-container {
+  width: 200px;
+  height: 40px;
+  background-color: red;
+  margin: 10px;
+  display: flex;
+}
+
 .ship div {
   width: 40px;
   height: 40px;
