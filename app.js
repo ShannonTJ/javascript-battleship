@@ -76,12 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (randomDirection === 0) direction = 1;
     if (randomDirection === 1) direction = width;
 
-    //get a random number from 0-99
-    //
+    //grid length (100) - (ship length * horizontal/vertical)
+    //randomStart is where the ship starts
+    //example: for the longest ship, the ship's tip can't be placed past index 50 or it'll go out of bounds
     let random = computerSquares.length - ship.directions[0].length * direction;
     let randomStart = Math.floor(Math.random() * random);
 
-    //check if a ship has already been placed there
+    //check if a ship has already been placed at the generated spot
+    //current = a ship's vertical/horizontal configuration
+    //current[index] is added to randomStart to check the  indices in computerSquares
     const isTaken = current.some((index) =>
       computerSquares[randomStart + index].classList.contains("taken")
     );
@@ -109,4 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
   createBoard(computerGrid, computerSquares);
 
   generate(shipArray[0]);
+  generate(shipArray[1]);
+  generate(shipArray[2]);
+  generate(shipArray[3]);
+  generate(shipArray[4]);
 });

@@ -65,3 +65,15 @@
 .destroyer {
   background-color: black;
 }
+.submarine {
+  background-color: red;
+}
+.cruiser {
+  background-color: black;
+}
+.battleship {
+  background-color: red;
+}
+.carrier {
+  background-color: black;
+}
