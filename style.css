@@ -15,7 +15,6 @@
 .grid div {
   width: 40px;
   height: 40px;
-  background-color: red;
 }
 
 .grid-display {
@@ -61,4 +60,8 @@
 .ship div {
   width: 40px;
   height: 40px;
+}
+
+.destroyer {
+  background-color: black;
 }

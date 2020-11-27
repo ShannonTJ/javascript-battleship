@@ -22,12 +22,91 @@ document.addEventListener("DOMContentLoaded", () => {
   function createBoard(grid, squares) {
     for (let i = 0; i < width * width; i++) {
       const square = document.createElement("div");
-      squares.dataset.id = i;
+      square.dataset.id = i;
       grid.appendChild(square);
       squares.push(square);
     }
   }
 
+  //SHIP ARRAY
+  const shipArray = [
+    {
+      name: "destroyer",
+      directions: [
+        [0, 1], //horizontal config
+        [0, width], //vertical config
+      ],
+    },
+    {
+      name: "submarine",
+      directions: [
+        [0, 1, 2], //horizontal config
+        [0, width, width * 2], //vertical config
+      ],
+    },
+    {
+      name: "cruiser",
+      directions: [
+        [0, 1, 2], //horizontal config
+        [0, width, width * 2], //vertical config
+      ],
+    },
+    {
+      name: "battleship",
+      directions: [
+        [0, 1, 2, 3], //horizontal config
+        [0, width, width * 2, width * 3], //vertical config
+      ],
+    },
+    {
+      name: "carrier",
+      directions: [
+        [0, 1, 2, 3, 4], //horizontal config
+        [0, width, width * 2, width * 3, width * 4], //vertical config
+      ],
+    },
+  ];
+
+  //RANDOMLY GENERATE COMPUTER SHIPS
+  function generate(ship) {
+    //get horizontal or vertical config
+    let randomDirection = Math.floor(Math.random() * ship.directions.length);
+    let current = ship.directions[randomDirection];
+
+    if (randomDirection === 0) direction = 1;
+    if (randomDirection === 1) direction = width;
+
+    //get a random number from 0-99
+    //
+    let random = computerSquares.length - ship.directions[0].length * direction;
+    let randomStart = Math.floor(Math.random() * random);
+
+    //check if a ship has already been placed there
+    const isTaken = current.some((index) =>
+      computerSquares[randomStart + index].classList.contains("taken")
+    );
+
+    //check for the right edge
+    const atRightEdge = current.some(
+      (index) => (randomStart + index) % width === width - 1
+    );
+
+    //check for the left edge
+    const atLeftEdge = current.some(
+      (index) => (randomStart + index) % width === 0
+    );
+
+    if (!isTaken && !atRightEdge && !atLeftEdge) {
+      current.forEach((index) =>
+        computerSquares[randomStart + index].classList.add("taken", ship.name)
+      );
+    } else {
+      generate(ship);
+    }
+  }
+
   createBoard(userGrid, userSquares);
   createBoard(computerGrid, computerSquares);
+
+  generate(shipArray[0]);
 });
