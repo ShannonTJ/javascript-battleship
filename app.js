@@ -241,7 +241,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //GAME LOGIC
   function playGame() {
+    //don't start the game when there is a game over
     if (isGameOver) return;
+    //don't start the game when all ships have not been placed
+    if (displayGrid.childNodes.length > 6) {
+      infoDisplay.innerHTML =
+        "Place all of your ships, then press start to begin.";
+      return;
+    }
+
+    infoDisplay.innerHTML = " ";
 
     if (currentPlayer === "user") {
       computerSquares.forEach((square) =>
@@ -361,7 +370,8 @@ document.addEventListener("DOMContentLoaded", () => {
       50
     ) {
       infoDisplay.innerHTML = "YOU WIN";
-      isGameOver = true;
+      setTimeout(3000);
+      gameOver();
     }
 
     if (
@@ -373,8 +383,17 @@ document.addEventListener("DOMContentLoaded", () => {
       50
     ) {
       infoDisplay.innerHTML = "YOU LOSE";
-      isGameOver = true;
+      setTimeout(3000);
+      gameOver();
     }
+  }
+
+  function gameOver() {
+    isGameOver = true;
+    startBtn.removeEventListener("click", playGame);
+    startBtn.addEventListener("click", function () {
+      location.reload();
+    });
   }
 
   //CREATE USER AND COMPUTER GAME AREAS
