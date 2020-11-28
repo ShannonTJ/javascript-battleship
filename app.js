@@ -24,11 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let draggedShipLength;
   let isGameOver = false;
   let currentPlayer = "user";
+
   let destroyerCount = 0;
   let submarineCount = 0;
   let cruiserCount = 0;
   let battleshipCount = 0;
   let carrierCount = 0;
+
+  let cpuDestroyerCount = 0;
+  let cpuSubmarineCount = 0;
+  let cpuCruiserCount = 0;
+  let cpuBattleshipCount = 0;
+  let cpuCarrierCount = 0;
 
   //EVENT LISTENERS
   rotateBtn.addEventListener("click", rotate);
@@ -246,23 +253,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (currentPlayer === "computer") {
-      turn.innerHTML = "Computer's Turn";
       //computer logic
+      turn.innerHTML = "Computer's Turn";
+      setTimeout(computerTurn, 1000);
     }
   }
 
   function revealSquare(square) {
     //game logic for user clicking on computer area
-    if (square.classList.contains("destroyer")) destroyerCount++;
-    if (square.classList.contains("submarine")) submarineCount++;
-    if (square.classList.contains("cruiser")) cruiserCount++;
-    if (square.classList.contains("battleship")) battleshipCount++;
-    if (square.classList.contains("carrier")) carrierCount++;
-
+    //check if a hit square was clicked again
+    if (!square.classList.contains("kaboom")) {
+      //if this is the first hit, update a counter
+      if (square.classList.contains("destroyer")) destroyerCount++;
+      if (square.classList.contains("submarine")) submarineCount++;
+      if (square.classList.contains("cruiser")) cruiserCount++;
+      if (square.classList.contains("battleship")) battleshipCount++;
+      if (square.classList.contains("carrier")) carrierCount++;
+    }
+    //change square color when the user hits
     if (square.classList.contains("taken")) {
       square.classList.add("kaboom");
     }
+    //change square color when the user misses
+    else {
+      square.classList.add("sploosh");
+    }
+
+    //computer turn begins
+    currentPlayer = "computer";
+    playGame();
   }
+
+  function computerTurn() {}
 
   //CREATE USER AND COMPUTER GAME AREAS
   createBoard(userGrid, userSquares);
