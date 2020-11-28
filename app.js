@@ -22,6 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedShipNameWithIndex;
   let draggedShip;
   let draggedShipLength;
+  let isGameOver = false;
+  let currentPlayer = "user";
+  let destroyerCount = 0;
+  let submarineCount = 0;
+  let cruiserCount = 0;
+  let battleshipCount = 0;
+  let carrierCount = 0;
 
   //EVENT LISTENERS
   rotateBtn.addEventListener("click", rotate);
@@ -161,13 +168,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //define horizontal boundaries
     for (let i = 0; i < 4; i++) {
       notAllowedHorizontal.push(i);
-      for (let j = 10; j < 110; j = j + 10) {
+      for (let j = 10; j < 100; j = j + 10) {
         notAllowedHorizontal.push(j + i);
       }
     }
     let newNotAllowedHorizontal = notAllowedHorizontal.splice(
       0,
-      20 * lastShipIndex
+      10 * lastShipIndex
     );
 
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); //where the user clicks on the ship (at the beginning, middle, end of the ship)
@@ -185,7 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
       let horizontalCheck;
       for (let i = 0; i < draggedShipLength; i++) {
         horizontalCheck = parseInt(this.dataset.id) - selectedShipIndex + i;
-        //check if any of the projected squares are taken
+        //check if any of the projected squares are taken or out of bounds
+        if (userSquares[horizontalCheck] > 99) return;
         if (userSquares[horizontalCheck].classList.contains("taken")) return;
       }
       //reach this loop if none of the squares are taken or out of bounds
@@ -220,17 +228,54 @@ document.addEventListener("DOMContentLoaded", () => {
     displayGrid.removeChild(draggedShip);
   }
 
-  function dragEnd() {}
+  function dragEnd() {
+    console.log("dragend");
+  }
 
+  //GAME LOGIC
+  function playGame() {
+    if (isGameOver) return;
+
+    if (currentPlayer === "user") {
+      turn.innerHTML = "Your Turn";
+      computerSquares.forEach((square) =>
+        square.addEventListener("click", function (e) {
+          revealSquare(square);
+        })
+      );
+    }
+
+    if (currentPlayer === "computer") {
+      turn.innerHTML = "Computer's Turn";
+      //computer logic
+    }
+  }
+
+  function revealSquare(square) {
+    //game logic for user clicking on computer area
+    if (square.classList.contains("destroyer")) destroyerCount++;
+    if (square.classList.contains("submarine")) submarineCount++;
+    if (square.classList.contains("cruiser")) cruiserCount++;
+    if (square.classList.contains("battleship")) battleshipCount++;
+    if (square.classList.contains("carrier")) carrierCount++;
+
+    if (square.classList.contains("taken")) {
+      square.classList.add("kaboom");
+    }
+  }
+
+  //CREATE USER AND COMPUTER GAME AREAS
   createBoard(userGrid, userSquares);
   createBoard(computerGrid, computerSquares);
 
+  //CREATE THE COMPUTER SHIPS
   generate(shipArray[0]);
   generate(shipArray[1]);
   generate(shipArray[2]);
   generate(shipArray[3]);
   generate(shipArray[4]);
 
+  //DRAG AND DROP LOGIC
   userSquares.forEach((square) =>
     square.addEventListener("dragstart", dragStart)
   );
@@ -245,4 +290,6 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   userSquares.forEach((square) => square.addEventListener("drop", dragDrop));
   userSquares.forEach((square) => square.addEventListener("dragend", dragEnd));
+
+  startBtn.addEventListener("click", playGame);
 });
