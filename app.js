@@ -244,17 +244,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isGameOver) return;
 
     if (currentPlayer === "user") {
-      turn.innerHTML = "Your Turn";
       computerSquares.forEach((square) =>
         square.addEventListener("click", function (e) {
           revealSquare(square);
         })
       );
-    }
-
-    if (currentPlayer === "computer") {
+    } else {
       //computer logic
-      turn.innerHTML = "Computer's Turn";
       setTimeout(computerTurn, 1000);
     }
   }
@@ -281,10 +277,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //computer turn begins
     currentPlayer = "computer";
+    turn.innerHTML = "Computer's Turn";
+
     playGame();
   }
 
-  function computerTurn() {}
+  function computerTurn() {
+    let random = Math.floor(Math.random() * userSquares.length);
+
+    console.log(userSquares[random]);
+
+    if (!userSquares[random].classList.contains("kaboom")) {
+      if (userSquares[random].classList.contains("destroyer"))
+        cpuDestroyerCount++;
+      if (userSquares[random].classList.contains("submarine"))
+        cpuSubmarineCount++;
+      if (userSquares[random].classList.contains("battleship"))
+        cpuBattleshipCount++;
+      if (userSquares[random].classList.contains("cruiser")) cpuCruiserCount++;
+      if (userSquares[random].classList.contains("carrier")) cpuCarrierCount++;
+    }
+
+    //change square color when the computer hits
+    if (userSquares[random].classList.contains("taken")) {
+      userSquares[random].classList.add("kaboom");
+    }
+    //change square color when the computer misses
+    else {
+      userSquares[random].classList.add("sploosh");
+    }
+
+    currentPlayer = "user";
+    turn.innerHTML = "Your Turn";
+  }
 
   //CREATE USER AND COMPUTER GAME AREAS
   createBoard(userGrid, userSquares);
