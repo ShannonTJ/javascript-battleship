@@ -275,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
       square.classList.add("sploosh");
     }
 
+    checkForWins();
     //computer turn begins
     currentPlayer = "computer";
     turn.innerHTML = "Computer's Turn";
@@ -307,8 +308,73 @@ document.addEventListener("DOMContentLoaded", () => {
       userSquares[random].classList.add("sploosh");
     }
 
+    checkForWins();
+
     currentPlayer = "user";
     turn.innerHTML = "Your Turn";
+  }
+
+  function checkForWins() {
+    if (destroyerCount === 2 || cpuDestroyerCount === 2) {
+      currentPlayer === "user"
+        ? (infoDisplay.innerHTML = "You sank the computer's destroyer")
+        : (infoDisplay.innerHTML = "The computer sank your destroyer");
+      currentPlayer === "user"
+        ? (destroyerCount = 10)
+        : (cpuDestroyerCount = 10);
+    }
+    if (submarineCount === 3 || cpuSubmarineCount === 3) {
+      currentPlayer === "user"
+        ? (infoDisplay.innerHTML = "You sank the computer's submarine")
+        : (infoDisplay.innerHTML = "The computer sank your submarine");
+      currentPlayer === "user"
+        ? (submarineCount = 10)
+        : (cpuSubmarineCount = 10);
+    }
+    if (cruiserCount === 3 || cpuCruiserCount === 3) {
+      currentPlayer === "user"
+        ? (infoDisplay.innerHTML = "You sank the computer's cruiser")
+        : (infoDisplay.innerHTML = "The computer sank your cruiser");
+      currentPlayer === "user" ? (cruiserCount = 10) : (cpuCruiserCount = 10);
+    }
+    if (battleshipCount === 4 || cpuBattleshipCount === 4) {
+      currentPlayer === "user"
+        ? (infoDisplay.innerHTML = "You sank the computer's battleship")
+        : (infoDisplay.innerHTML = "The computer sank your battleship");
+      currentPlayer === "user"
+        ? (battleshipCount = 10)
+        : (cpuBattleshipCount = 10);
+    }
+    if (carrierCount === 5 || cpuCarrierCount === 5) {
+      currentPlayer === "user"
+        ? (infoDisplay.innerHTML = "You sank the computer's carrier")
+        : (infoDisplay.innerHTML = "The computer sank your carrier");
+      currentPlayer === "user" ? (carrierCount = 10) : (cpuCarrierCount = 10);
+    }
+
+    if (
+      destroyerCount +
+        submarineCount +
+        cruiserCount +
+        battleshipCount +
+        carrierCount ===
+      50
+    ) {
+      infoDisplay.innerHTML = "YOU WIN";
+      isGameOver = true;
+    }
+
+    if (
+      cpuDestroyerCount +
+        cpuSubmarineCount +
+        cpuCruiserCount +
+        cpuBattleshipCount +
+        cpuCarrierCount ===
+      50
+    ) {
+      infoDisplay.innerHTML = "YOU LOSE";
+      isGameOver = true;
+    }
   }
 
   //CREATE USER AND COMPUTER GAME AREAS
