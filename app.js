@@ -253,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    //player logic
     if (currentPlayer === "user") {
       computerSquares.forEach((square) =>
         square.addEventListener("click", function (e) {
@@ -262,7 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
             !square.classList.contains("sploosh")
           ) {
             revealSquare(square);
-          } else {
+          }
+          //display an error message to the user
+          else {
             infoDisplay.innerHTML = "You've already clicked this square";
             setTimeout(function () {
               infoDisplay.innerHTML = " ";
@@ -402,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
         carrierCount ===
       50
     ) {
-      infoDisplay.innerHTML = "YOU WIN! Press start to play again.";
+      infoDisplay.innerHTML = "YOU WIN! Press start to play again";
       gameOver();
     }
 
@@ -414,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cpuCarrierCount ===
       50
     ) {
-      infoDisplay.innerHTML = "YOU LOSE. Press start to play again.";
+      infoDisplay.innerHTML = "YOU LOSE. Press start to play again";
       gameOver();
     }
   }
