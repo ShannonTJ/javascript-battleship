@@ -157,8 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let shipFirstIdVertical = parseInt(this.dataset.id) - width * lastShipIndex;
 
     let notAllowedHorizontal = [];
-    let notAllowedTopVertical = [];
-    let notAllowedBottomVertical = [];
 
     //define horizontal boundaries
     for (let i = 0; i < 4; i++) {
@@ -171,16 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
       0,
       10 * lastShipIndex
     );
-
-    //define top vertical boundaries
-    for (let i = -50; i < 0; i++) {
-      notAllowedTopVertical.push(i);
-    }
-
-    //define bottom vertical boundaries
-    for (let i = 100; i < 150; i++) {
-      notAllowedBottomVertical.push(i);
-    }
 
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); //where the user clicks on the ship (at the beginning, middle, end of the ship)
     shipLastIdHorizontal = shipLastIdHorizontal - selectedShipIndex; //ship length + userSquare index - where the user clicked on the ship...gives consistent last id number
@@ -219,8 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
     //error checking for vertical ship placement
     else if (
       !isHorizontal &&
-      !notAllowedBottomVertical.includes(shipLastIdVertical) &&
-      !notAllowedTopVertical.includes(shipFirstIdVertical)
+      shipLastIdVertical < 100 &&
+      shipFirstIdVertical > 0
     ) {
       //check if any of the projected squares are taken
       for (let i = 0; i < draggedShipLength; i++) {
