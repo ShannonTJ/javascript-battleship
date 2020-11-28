@@ -174,16 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
     shipLastIdHorizontal = shipLastIdHorizontal - selectedShipIndex; //ship length + userSquare index - where the user clicked on the ship...gives consistent last id number
     shipLastIdVertical = shipLastIdVertical - selectedShipIndex * width; //get the bottom id of the vertical ships
 
-    console.log("first vert: " + shipFirstIdVertical);
-    console.log("last vert: " + shipLastIdVertical);
-    //FOR VERTICAL SHIPS......
-    //get the top id of the ship if user clicks index 0
-    if (selectedShipIndex === 0)
-      shipFirstIdVertical = shipFirstIdVertical + lastShipIndex * width;
-    //get the top id of the ship if user clicks any other index
-    else
-      shipFirstIdVertical =
-        shipFirstIdVertical + (lastShipIndex - selectedShipIndex) * width;
+    let shipLengthMinusOne = draggedShipLength - 1;
+    shipFirstIdVertical = shipLastIdVertical - shipLengthMinusOne * width; //from the bottom id, get the top id of the vertical ships
 
     //error checking for horizontal ship placement
     if (
@@ -206,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (
       !isHorizontal &&
       shipLastIdVertical < 100 &&
-      shipFirstIdVertical > 0
+      shipFirstIdVertical > -1
     ) {
       //check if any of the projected squares are taken
       let verticalCheck;
