@@ -14,11 +14,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const turn = document.querySelector("#whose-turn");
   const infoDisplay = document.querySelector("#info");
 
+  //VARIABLES
   const width = 10;
   const userSquares = [];
   const computerSquares = [];
-
   let isHorizontal = true;
+  let selectedShipNameWithIndex;
+  let draggedShip;
+  let draggedShipLength;
+
+  //EVENT LISTENERS
+  rotateBtn.addEventListener("click", rotate);
+  ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
 
   //CREATE BOARD
   function createBoard(grid, squares) {
@@ -112,27 +119,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //ROTATE THE PLAYER SHIPS
   function rotate() {
-    if (isHorizontal) {
-      destroyer.classList.toggle("destroyer-container-vertical");
-      submarine.classList.toggle("submarine-container-vertical");
-      cruiser.classList.toggle("cruiser-container-vertical");
-      battleship.classList.toggle("battleship-container-vertical");
-      carrier.classList.toggle("carrier-container-vertical");
-      isHorizontal = false;
-      return;
-    }
-    if (!isHorizontal) {
-      destroyer.classList.toggle("destroyer-container-vertical");
-      submarine.classList.toggle("submarine-container-vertical");
-      cruiser.classList.toggle("cruiser-container-vertical");
-      battleship.classList.toggle("battleship-container-vertical");
-      carrier.classList.toggle("carrier-container-vertical");
-      isHorizontal = true;
-      return;
-    }
+    destroyer.classList.toggle("destroyer-container-vertical");
+    submarine.classList.toggle("submarine-container-vertical");
+    cruiser.classList.toggle("cruiser-container-vertical");
+    battleship.classList.toggle("battleship-container-vertical");
+    carrier.classList.toggle("carrier-container-vertical");
+    isHorizontal = !isHorizontal;
+    return;
   }
 
-  rotateBtn.addEventListener("click", rotate);
+  ships.forEach((ship) =>
+    ship.addEventListener("mousedown", (e) => {
+      selectedShipNameWithIndex = e.target.id;
+    })
+  );
+
+  function dragStart() {
+    draggedShip = this;
+    draggedShipLength = this.childNodes.length;
+  }
+  function dragOver(e) {
+    e.preventDefault();
+  }
+  function dragEnter(e) {
+    e.preventDefault();
+  }
+  function dragLeave() {
+    console.log("drag leave");
+  }
+
+  function dragDrop() {
+    let shipNameWithLastId = draggedShip.lastChild.id;
+    let shipClass = shipNameWithLastId.slice(0, -2);
+    let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
+    console.log(shipClass + " " + lastShipIndex);
+  }
+
+  function dragEnd() {}
 
   createBoard(userGrid, userSquares);
   createBoard(computerGrid, computerSquares);
@@ -142,4 +165,19 @@ document.addEventListener("DOMContentLoaded", () => {
   generate(shipArray[2]);
   generate(shipArray[3]);
   generate(shipArray[4]);
+
+  userSquares.forEach((square) =>
+    square.addEventListener("dragstart", dragStart)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragover", dragOver)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragenter", dragEnter)
+  );
+  userSquares.forEach((square) =>
+    square.addEventListener("dragleave", dragLeave)
+  );
+  userSquares.forEach((square) => square.addEventListener("drop", dragDrop));
+  userSquares.forEach((square) => square.addEventListener("dragend", dragEnd));
 });
