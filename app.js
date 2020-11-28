@@ -161,19 +161,22 @@ document.addEventListener("DOMContentLoaded", () => {
     //define horizontal boundaries
     for (let i = 0; i < 4; i++) {
       notAllowedHorizontal.push(i);
-      for (let j = 10; j < 100; j = j + 10) {
+      for (let j = 10; j < 110; j = j + 10) {
         notAllowedHorizontal.push(j + i);
       }
     }
     let newNotAllowedHorizontal = notAllowedHorizontal.splice(
       0,
-      10 * lastShipIndex
+      20 * lastShipIndex
     );
 
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); //where the user clicks on the ship (at the beginning, middle, end of the ship)
     shipLastIdHorizontal = shipLastIdHorizontal - selectedShipIndex; //ship length + userSquare index - where the user clicked on the ship...gives consistent last id number
     shipLastIdVertical = shipLastIdVertical - selectedShipIndex * width; //get the bottom id of the vertical ships
 
+    console.log("first vert: " + shipFirstIdVertical);
+    console.log("last vert: " + shipLastIdVertical);
+    //FOR VERTICAL SHIPS......
     //get the top id of the ship if user clicks index 0
     if (selectedShipIndex === 0)
       shipFirstIdVertical = shipFirstIdVertical + lastShipIndex * width;
@@ -187,21 +190,16 @@ document.addEventListener("DOMContentLoaded", () => {
       isHorizontal &&
       !newNotAllowedHorizontal.includes(shipLastIdHorizontal)
     ) {
-      //check if any of the projected squares are taken
+      let horizontalCheck;
       for (let i = 0; i < draggedShipLength; i++) {
-        if (
-          userSquares[
-            parseInt(this.dataset.id) - selectedShipIndex + i
-          ].classList.contains("taken")
-        ) {
-          return;
-        }
+        horizontalCheck = parseInt(this.dataset.id) - selectedShipIndex + i;
+        //check if any of the projected squares are taken
+        if (userSquares[horizontalCheck].classList.contains("taken")) return;
       }
-      //reach this loop if none of the squares are taken
+      //reach this loop if none of the squares are taken or out of bounds
       for (let i = 0; i < draggedShipLength; i++) {
-        userSquares[
-          parseInt(this.dataset.id) - selectedShipIndex + i
-        ].classList.add("taken", shipClass);
+        horizontalCheck = parseInt(this.dataset.id) - selectedShipIndex + i;
+        userSquares[horizontalCheck].classList.add("taken", shipClass);
       }
     }
     //error checking for vertical ship placement
@@ -211,20 +209,19 @@ document.addEventListener("DOMContentLoaded", () => {
       shipFirstIdVertical > 0
     ) {
       //check if any of the projected squares are taken
+      let verticalCheck;
       for (let i = 0; i < draggedShipLength; i++) {
-        if (
-          userSquares[
-            parseInt(this.dataset.id) - selectedShipIndex * width + i * width
-          ].classList.contains("taken")
-        ) {
+        verticalCheck =
+          parseInt(this.dataset.id) - selectedShipIndex * width + i * width;
+        if (userSquares[verticalCheck].classList.contains("taken")) {
           return;
         }
       }
       //reach this loop if none of the squares are taken
       for (let i = 0; i < draggedShipLength; i++) {
-        userSquares[
-          parseInt(this.dataset.id) - selectedShipIndex * width + i * width
-        ].classList.add("taken", shipClass);
+        verticalCheck =
+          parseInt(this.dataset.id) - selectedShipIndex * width + i * width;
+        userSquares[verticalCheck].classList.add("taken", shipClass);
       }
     } else return;
     //if the ship placement passes all the error checking, remove it from the display grid
