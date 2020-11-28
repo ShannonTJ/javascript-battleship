@@ -149,10 +149,114 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function dragDrop() {
-    let shipNameWithLastId = draggedShip.lastChild.id;
-    let shipClass = shipNameWithLastId.slice(0, -2);
-    let lastShipIndex = parseInt(shipNameWithLastId.substr(-1));
-    console.log(shipClass + " " + lastShipIndex);
+    let shipNameWithLastId = draggedShip.lastChild.id; //shipname + id : 'destroyer-01'
+    let shipClass = shipNameWithLastId.slice(0, -2); //shipname by itself : 'destroyer'
+    let lastShipIndex = parseInt(shipNameWithLastId.substr(-1)); //ship length in array notation : 1 (for destroyer)
+    let shipLastIdHorizontal = lastShipIndex + parseInt(this.dataset.id); //ship length in array notation + userSquare index
+    let shipLastIdVertical = parseInt(this.dataset.id) + width * lastShipIndex;
+    let shipFirstIdVertical = parseInt(this.dataset.id) - width * lastShipIndex;
+
+    console.log("ship FIRST id vertical 1: " + shipFirstIdVertical);
+    // console.log("ship last id vertical 1: " + shipLastIdVertical);
+
+    let notAllowedHorizontal = [];
+    let notAllowedTopVertical = [];
+    let notAllowedBottomVertical = [];
+
+    //define horizontal boundaries
+    for (let i = 0; i < 4; i++) {
+      notAllowedHorizontal.push(i);
+      for (let j = 10; j < 100; j = j + 10) {
+        notAllowedHorizontal.push(j + i);
+      }
+    }
+    let newNotAllowedHorizontal = notAllowedHorizontal.splice(
+      0,
+      10 * lastShipIndex
+    );
+
+    //define top boundaries
+    for (let i = -50; i < 0; i++) {
+      notAllowedTopVertical.push(i);
+    }
+
+    //define bottom boundaries
+    for (let i = 100; i < 150; i++) {
+      notAllowedBottomVertical.push(i);
+    }
+
+    selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1)); //where the user clicks on the ship (at the beginning, middle, end of the ship)
+    shipLastIdHorizontal = shipLastIdHorizontal - selectedShipIndex; //ship length + userSquare index - where the user clicked on the ship...gives consistent last id number
+    shipLastIdVertical = shipLastIdVertical - selectedShipIndex * width; //get the last id of vertical ships
+
+    if (selectedShipIndex === 0)
+      shipFirstIdVertical = shipFirstIdVertical + lastShipIndex * width;
+    else
+      shipFirstIdVertical =
+        shipFirstIdVertical + (lastShipIndex - selectedShipIndex) * width;
+
+    if (
+      isHorizontal &&
+      !newNotAllowedHorizontal.includes(shipLastIdHorizontal)
+    ) {
+      for (let i = 0; i < draggedShipLength; i++) {
+        userSquares[
+          parseInt(this.dataset.id) - selectedShipIndex + i
+        ].classList.add("taken", shipClass);
+      }
+    } else if (
+      !isHorizontal &&
+      !notAllowedBottomVertical.includes(shipLastIdVertical) &&
+      !notAllowedTopVertical.includes(shipFirstIdVertical)
+    ) {
+      for (let i = 0; i < draggedShipLength; i++) {
+        let num = width * i;
+        let total;
+        //grab ship at the top, render all pieces straight down
+        if (selectedShipIndex === 0) {
+          total = parseInt(this.dataset.id) + num - selectedShipIndex;
+        }
+        //grab ship at index 1, render top 2 pieces up and the other pieces down
+        else if (selectedShipIndex === 1 && i <= 1) {
+          total = parseInt(this.dataset.id) - num;
+        } else if (selectedShipIndex === 1 && i > 1) {
+          for (let j = 0; j < draggedShipLength - selectedShipIndex; j++) {
+            total = parseInt(this.dataset.id) + width * j;
+            userSquares[total].classList.add("taken", shipClass);
+          }
+          displayGrid.removeChild(draggedShip);
+          return;
+          //grab ship at index 2, render top 3 pieces up and the other pieces down
+        } else if (selectedShipIndex === 2 && i <= 2) {
+          total = parseInt(this.dataset.id) - num;
+        } else if (selectedShipIndex === 2 && i > 2) {
+          for (let j = 0; j < draggedShipLength - selectedShipIndex; j++) {
+            total = parseInt(this.dataset.id) + width * j;
+            userSquares[total].classList.add("taken", shipClass);
+          }
+          displayGrid.removeChild(draggedShip);
+          return;
+          //grab ship at index 3, render top 4 pieces up and the other pieces down
+        } else if (selectedShipIndex === 3 && i <= 3) {
+          total = parseInt(this.dataset.id) - num;
+        } else if (selectedShipIndex === 3 && i > 3) {
+          for (let j = 0; j < draggedShipLength - selectedShipIndex; j++) {
+            total = parseInt(this.dataset.id) + width * j;
+            userSquares[total].classList.add("taken", shipClass);
+          }
+          displayGrid.removeChild(draggedShip);
+          return;
+        }
+        //grab lowest piece of the biggest ship, render all pieces up
+        else if (selectedShipIndex === 4)
+          total = parseInt(this.dataset.id) - num;
+
+        // console.log("total: " + total);
+
+        userSquares[total].classList.add("taken", shipClass);
+      }
+    } else return;
+    displayGrid.removeChild(draggedShip);
   }
 
   function dragEnd() {}
