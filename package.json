@@ -1,0 +1,23 @@
+{
+  "name": "javascript-battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShannonTJ/javascript-battleship.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShannonTJ/javascript-battleship/issues"
+  },
+  "homepage": "https://github.com/ShannonTJ/javascript-battleship#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
