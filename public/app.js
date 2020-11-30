@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const rotateBtn = document.querySelector("#rotate");
   const turn = document.querySelector("#whose-turn");
   const infoDisplay = document.querySelector("#info");
+  const singlePlayerButton = document.querySelector("#singlePlayerButton");
+  const multiplayerButton = document.querySelector("#multiplayerButton");
 
   //VARIABLES
   const width = 10;
@@ -38,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let cpuBattleshipCount = 0;
   let cpuCarrierCount = 0;
 
-  //SERVER VARIABLES
+  //SERVER VARIABLES (multiplayer only)
   let gameMode = "";
   let playerNum = 0;
   let ready = false;
@@ -46,22 +48,48 @@ document.addEventListener("DOMContentLoaded", () => {
   let allShipsPlaced = false;
   let shotFired = -1;
 
-  //Get your player number
-  const socket = io();
-  socket.on("player-number", (num) => {
-    if (num === -1) {
-      infoDisplay.innerHTML = "Sorry the server is full";
-    } else {
-      playerNum = parseInt(num);
-      if (playerNum === 1) currentPlayer = "enemy";
-
-      console.log(playerNum);
-    }
-  });
-
   //EVENT LISTENERS
   rotateBtn.addEventListener("click", rotate);
   ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
+  singlePlayerButton.addEventListener("click", startSinglePlayer);
+  multiplayerButton.addEventListener("click", startMultiplayer);
+
+  //MULTIPLAYER FUNCTION
+  function startMultiplayer() {
+    gameMode = "multiplayer";
+
+    //Get player number
+    const socket = io();
+    socket.on("player-number", (num) => {
+      if (num === -1) {
+        infoDisplay.innerHTML = "Sorry the server is full";
+      } else {
+        playerNum = parseInt(num);
+        if (playerNum === 1) currentPlayer = "enemy";
+
+        console.log(playerNum);
+      }
+    });
+
+    //Another player has connected or disconnected
+    socket.on("player-connection", (num) => {
+      console.log(`Player number ${num} has connected or disconnected`);
+    });
+  }
+
+  //SINGLE PLAYER FUNCTION
+  function startSinglePlayer() {
+    gameMode = "singlePlayer";
+
+    //CREATE THE COMPUTER SHIPS (singlePlayer mode ONLY)
+    generate(shipArray[0]);
+    generate(shipArray[1]);
+    generate(shipArray[2]);
+    generate(shipArray[3]);
+    generate(shipArray[4]);
+
+    startBtn.addEventListener("click", playGameSingle);
+  }
 
   //CREATE BOARD
   function createBoard(grid, squares) {
@@ -262,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //GAME LOGIC
-  function playGame() {
+  function playGameSingle() {
     //don't start the game when there is a game over
     if (isGameOver) return;
     //don't start the game when all ships have not been placed
@@ -324,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //computer turn begins
     currentPlayer = "computer";
     turn.innerHTML = "Computer's Turn";
-    playGame();
+    playGameSingle();
   }
 
   function computerTurn() {
@@ -446,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function gameOver() {
     isGameOver = true;
-    startBtn.removeEventListener("click", playGame);
+    startBtn.removeEventListener("click", playGameSingle);
     startBtn.addEventListener("click", function () {
       location.reload();
     });
@@ -455,13 +483,6 @@ document.addEventListener("DOMContentLoaded", () => {
   //CREATE USER AND COMPUTER GAME AREAS
   createBoard(userGrid, userSquares);
   createBoard(computerGrid, computerSquares);
-
-  //CREATE THE COMPUTER SHIPS
-  generate(shipArray[0]);
-  generate(shipArray[1]);
-  generate(shipArray[2]);
-  generate(shipArray[3]);
-  generate(shipArray[4]);
 
   //DRAG AND DROP LOGIC
   userSquares.forEach((square) =>
@@ -478,6 +499,4 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   userSquares.forEach((square) => square.addEventListener("drop", dragDrop));
   userSquares.forEach((square) => square.addEventListener("dragend", dragEnd));
-
-  startBtn.addEventListener("click", playGame);
 });
