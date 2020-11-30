@@ -68,6 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (playerNum === 1) currentPlayer = "enemy";
 
         console.log(playerNum);
+
+        //Get other player status
+        socket.emit("check-players");
       }
     });
 
@@ -75,6 +78,36 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("player-connection", (num) => {
       console.log(`Player number ${num} has connected or disconnected`);
       playerConnectedOrDisconnected(num);
+    });
+
+    //On enemy ready
+    socket.on("enemy-ready", (num) => {
+      enemyReady = true; //set local variable
+      playerReady(num); //pass player number to playerReady (toggle red to green)
+      if (ready) playGameMulti(socket); //start game if we are ready
+    });
+
+    //Check player status
+    socket.on("check-players", (players) => {
+      players.forEach((p, i) => {
+        if (p.connected) playerConnectedOrDisconnected(i); //pass index of player to change visual status of player
+        if (p.ready) {
+          playerReady(i);
+          if (i !== playerNum) enemyReady = true; //if the ready player isn't us, it must be the enemy
+        }
+      });
+    });
+
+    //Ready button click
+    startBtn.addEventListener("click", () => {
+      if (allShipsPlaced) playGameMulti(socket);
+      else {
+        infoDisplay.innerHTML =
+          "Please place all ships, then press start to begin";
+        setTimeout(function () {
+          infoDisplay.innerHTML = " ";
+        }, 3000);
+      }
     });
 
     function playerConnectedOrDisconnected(num) {
@@ -293,25 +326,42 @@ document.addEventListener("DOMContentLoaded", () => {
     } else return;
     //if the ship placement passes all the error checking, remove it from the display grid
     displayGrid.removeChild(draggedShip);
+    //check if all ships have been placed
+    if (!displayGrid.querySelector(".ship")) allShipsPlaced = true;
   }
 
   function dragEnd() {
     console.log("dragend");
   }
 
-  //GAME LOGIC
+  //GAME LOGIC FOR MULTIPLAYER
+  function playGameMulti(socket) {
+    if (isGameOver) return;
+    if (!ready) {
+      socket.emit("player-ready");
+      ready = true;
+      playerReady(playerNum);
+    }
+
+    if (enemyReady) {
+      if (currentPlayer === "user") {
+        turn.innerHTML = "Your Turn";
+      }
+      if (currentPlayer === "enemy") {
+        turn.innerHTML = "Enemy's Turn";
+      }
+    }
+  }
+
+  function playerReady(num) {
+    let player = `.p${parseInt(num) + 1}`;
+    document.querySelector(`${player} .ready span`).classList.toggle("green");
+  }
+
+  //GAME LOGIC FOR SINGLE PLAYER
   function playGameSingle() {
     //don't start the game when there is a game over
     if (isGameOver) return;
-    //don't start the game when all ships have not been placed
-    if (displayGrid.childNodes.length > 6) {
-      infoDisplay.innerHTML =
-        "Place all of your ships, then press start to begin.";
-      setTimeout(function () {
-        infoDisplay.innerHTML = " ";
-      }, 3000);
-      return;
-    }
 
     //player logic
     if (currentPlayer === "user") {
@@ -489,6 +539,8 @@ document.addEventListener("DOMContentLoaded", () => {
       location.reload();
     });
   }
+
+  //INVOKE FUNCTIONS////////////////////////////////////////////////////////////////////////
 
   //CREATE USER AND COMPUTER GAME AREAS
   createBoard(userGrid, userSquares);

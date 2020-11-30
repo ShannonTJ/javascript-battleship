@@ -39,4 +39,30 @@ io.on("connection", (socket) => {
 
   //Tell everyone else what player number just connected
   socket.broadcast.emit("player-connection", playerIndex);
+
+  //Handle player disconnection
+  socket.on("disconnect", () => {
+    console.log(`Player ${playerIndex} has disconnected`);
+    connections[playerIndex] = null;
+    //Tell everyone what player number just disconnected
+    socket.broadcast.emit("player-connection", playerIndex);
+  });
+
+  //When player is ready
+  socket.on("player-ready", () => {
+    socket.broadcast.emit("enemy-ready", playerIndex); //broadcast to other players that an enemy is ready and the enemy's player index
+    connections[playerIndex] = true;
+  });
+
+  //Check player connections
+  socket.on("check-players", () => {
+    const players = [];
+    //loop through connections
+    for (const i in connections) {
+      connections[i] == null
+        ? players.push({ connected: false, ready: false })
+        : players.push({ connected: true, ready: connections[i] }); //get ready status from the actual connection
+    }
+    socket.emit("check-players", players);
+  });
 });
