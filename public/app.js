@@ -1,3 +1,5 @@
+// const { info } = require("console");
+
 document.addEventListener("DOMContentLoaded", () => {
   //QUERY SELECTORS
   const userGrid = document.querySelector(".grid-user");
@@ -98,6 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+    //On timeout
+    socket.on("timeout", () => {
+      infoDisplay.innerHTML = "You have reached the 10 minute limit";
+    });
+
     //Ready button click for multiplayer
     startBtn.addEventListener("click", () => {
       if (allShipsPlaced) playGameMulti(socket);
@@ -155,7 +162,16 @@ document.addEventListener("DOMContentLoaded", () => {
     generate(shipArray[3]);
     generate(shipArray[4]);
 
-    startBtn.addEventListener("click", playGameSingle);
+    startBtn.addEventListener("click", () => {
+      if (allShipsPlaced) playGameSingle();
+      else {
+        infoDisplay.innerHTML =
+          "Please place all ships, then press start to begin";
+        setTimeout(function () {
+          infoDisplay.innerHTML = " ";
+        }, 3000);
+      }
+    });
   }
 
   //CREATE BOARD
@@ -396,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
             !square.classList.contains("kaboom") &&
             !square.classList.contains("sploosh")
           ) {
+            shotFired = square.dataset.id;
             revealSquare(square.classList);
           }
           //display an error message to the user
@@ -499,55 +516,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function checkForWins() {
+    let enemy = "computer";
     let message = infoDisplay.innerHTML;
 
-    //display destroyer messages
+    if (gameMode === "multiplayer") enemy = "enemy";
+
     if (destroyerCount === 2) {
-      message = "You sank the computer's destroyer";
+      //display destroyer messages
+      message = `You sank the ${enemy}'s destroyer`;
       destroyerCount = 10;
     }
     if (cpuDestroyerCount === 2) {
-      message = "The computer sank your destroyer";
+      message = `The ${enemy} sank your destroyer`;
       cpuDestroyerCount = 10;
     }
 
     //display submarine messages
     if (submarineCount === 3) {
-      message = "You sank the computer's submarine";
+      message = `You sank the ${enemy}'s submarine`;
       submarineCount = 10;
     }
     if (cpuSubmarineCount === 3) {
-      message = "The computer sank your submarine";
+      message = `The ${enemy} sank your submarine`;
       cpuSubmarineCount = 10;
     }
 
     //display cruiser messages
     if (cruiserCount === 3) {
-      message = "You sank the computer's cruiser";
+      message = `You sank the ${enemy}'s cruiser`;
       cruiserCount = 10;
     }
     if (cpuCruiserCount === 3) {
-      message = "The computer sank your cruiser";
+      message = `The ${enemy} sank your cruiser`;
       cpuCruiserCount = 10;
     }
 
     //display battleship messages
     if (battleshipCount === 4) {
-      message = "You sank the computer's battleship";
+      message = `You sank the ${enemy}'s battleship`;
       battleshipCount = 10;
     }
     if (cpuBattleshipCount === 4) {
-      message = "The computer sank your battleship";
+      message = `The ${enemy} sank your battleship`;
       cpuBattleshipCount = 10;
     }
 
     //display carrier messages
     if (carrierCount === 5) {
-      message = "You sank the computer's carrier";
+      message = `You sank the ${enemy}'s carrier`;
       carrierCount = 10;
     }
     if (cpuCarrierCount === 5) {
-      message = "The computer sank your carrier";
+      message = `The ${enemy} sank your carrier`;
       cpuCarrierCount = 10;
     }
 
