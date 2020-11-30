@@ -15,8 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const rotateBtn = document.querySelector("#rotate");
   const turn = document.querySelector("#whose-turn");
   const infoDisplay = document.querySelector("#info");
-  const singlePlayerButton = document.querySelector("#singlePlayerButton");
-  const multiplayerButton = document.querySelector("#multiplayerButton");
 
   //VARIABLES
   const width = 10;
@@ -42,8 +40,50 @@ document.addEventListener("DOMContentLoaded", () => {
   let cpuBattleshipCount = 0;
   let cpuCarrierCount = 0;
 
+  //SHIP ARRAY
+  const shipArray = [
+    {
+      name: "destroyer",
+      directions: [
+        [0, 1], //horizontal config
+        [0, width], //vertical config
+      ],
+    },
+    {
+      name: "submarine",
+      directions: [
+        [0, 1, 2], //horizontal config
+        [0, width, width * 2], //vertical config
+      ],
+    },
+    {
+      name: "cruiser",
+      directions: [
+        [0, 1, 2], //horizontal config
+        [0, width, width * 2], //vertical config
+      ],
+    },
+    {
+      name: "battleship",
+      directions: [
+        [0, 1, 2, 3], //horizontal config
+        [0, width, width * 2, width * 3], //vertical config
+      ],
+    },
+    {
+      name: "carrier",
+      directions: [
+        [0, 1, 2, 3, 4], //horizontal config
+        [0, width, width * 2, width * 3, width * 4], //vertical config
+      ],
+    },
+  ];
+
+  //CREATE USER AND COMPUTER GAME AREAS
+  createBoard(userGrid, userSquares);
+  createBoard(computerGrid, computerSquares);
+
   //SERVER VARIABLES (multiplayer only)
-  let gameMode = "";
   let playerNum = 0;
   let ready = false;
   let enemyReady = false;
@@ -53,13 +93,13 @@ document.addEventListener("DOMContentLoaded", () => {
   //EVENT LISTENERS
   rotateBtn.addEventListener("click", rotate);
   ships.forEach((ship) => ship.addEventListener("dragstart", dragStart));
-  singlePlayerButton.addEventListener("click", startSinglePlayer);
-  multiplayerButton.addEventListener("click", startMultiplayer);
+
+  //SELECT PLAYER MODE
+  if (gameMode === "singlePlayer") startSinglePlayer();
+  else startMultiplayer();
 
   //MULTIPLAYER FUNCTION
   function startMultiplayer() {
-    gameMode = "multiplayer";
-
     //Get player number
     const socket = io();
     socket.on("player-number", (num) => {
@@ -153,8 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //SINGLE PLAYER FUNCTION
   function startSinglePlayer() {
-    gameMode = "singlePlayer";
-
     //CREATE THE COMPUTER SHIPS (singlePlayer mode ONLY)
     generate(shipArray[0]);
     generate(shipArray[1]);
@@ -183,45 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
       squares.push(square);
     }
   }
-
-  //SHIP ARRAY
-  const shipArray = [
-    {
-      name: "destroyer",
-      directions: [
-        [0, 1], //horizontal config
-        [0, width], //vertical config
-      ],
-    },
-    {
-      name: "submarine",
-      directions: [
-        [0, 1, 2], //horizontal config
-        [0, width, width * 2], //vertical config
-      ],
-    },
-    {
-      name: "cruiser",
-      directions: [
-        [0, 1, 2], //horizontal config
-        [0, width, width * 2], //vertical config
-      ],
-    },
-    {
-      name: "battleship",
-      directions: [
-        [0, 1, 2, 3], //horizontal config
-        [0, width, width * 2, width * 3], //vertical config
-      ],
-    },
-    {
-      name: "carrier",
-      directions: [
-        [0, 1, 2, 3, 4], //horizontal config
-        [0, width, width * 2, width * 3, width * 4], //vertical config
-      ],
-    },
-  ];
 
   //RANDOMLY GENERATE COMPUTER SHIPS
   function generate(ship) {
@@ -607,10 +606,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //INVOKE FUNCTIONS////////////////////////////////////////////////////////////////////////
-
-  //CREATE USER AND COMPUTER GAME AREAS
-  createBoard(userGrid, userSquares);
-  createBoard(computerGrid, computerSquares);
 
   //DRAG AND DROP LOGIC
   userSquares.forEach((square) =>

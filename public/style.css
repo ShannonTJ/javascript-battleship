@@ -60,121 +60,83 @@ body {
   opacity: 0.25;
 }
 
-/* .container {
+.container {
   display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
-.grid-user,
-.grid-computer {
-  width: 400px;
-  height: 400px;
-  display: flex;
-  flex-wrap: wrap;
-  background-color: lightblue;
-  margin: 20px;
+.battleship-grid {
+  margin: 2vmin;
+  display: grid;
+  background-color: hsl(200, 100%, 50%);
+  grid-template-rows: repeat(10, 4.6vmin);
+  grid-template-columns: repeat(10, 4.6vmin);
 }
 
-.grid div {
-  width: 40px;
-  height: 40px;
+.taken,
+.ship {
+  background-color: grey;
 }
 
 .grid-display {
-  width: 400px;
-  height: 400px;
-  margin: 20px;
-  background-color: lightblue;
+  display: flex;
+}
+
+.ship > div {
+  width: 4.6vmin;
+  height: 4.6vmin;
+}
+
+.ship {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1vmin;
+  width: calc(4.6vmin * var(--width, 1));
+  height: calc(4.6vmin * var(--height, 1));
+  border-radius: 2.3vmin;
+}
+
+.battleship-grid div {
+  border: 1px solid hsla(0, 0%, 100%, 0.2);
 }
 
 .destroyer-container {
-  width: 80px;
-  height: 40px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
+  --width: 2;
 }
 
 .destroyer-container-vertical {
-  width: 40px;
-  height: 80px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  --height: 2;
+  --width: 1;
 }
 
 .submarine-container,
 .cruiser-container {
-  width: 120px;
-  height: 40px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
+  --width: 3;
 }
 
 .submarine-container-vertical,
 .cruiser-container-vertical {
-  width: 40px;
-  height: 120px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  --height: 3;
+  --width: 1;
 }
 
 .battleship-container {
-  width: 160px;
-  height: 40px;
-  background-color: grey;
-  margin: 10px;
-  display: flex;
+  --width: 4;
 }
 
 .battleship-container-vertical {
-  width: 40px;
-  height: 160px;
-  background-color: grey;
-  margin: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  --height: 4;
+  --width: 1;
 }
 
 .carrier-container {
-  width: 200px;
-  height: 40px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
+  --width: 5;
 }
 
 .carrier-container-vertical {
-  width: 40px;
-  height: 200px;
-  background-color: black;
-  margin: 10px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.ship div {
-  width: 40px;
-  height: 40px;
-}
-
-.destroyer {
-  background-color: black;
-}
-.submarine {
-  background-color: black;
-}
-.cruiser {
-  background-color: black;
-}
-.battleship {
-  background-color: grey;
-}
-.carrier {
-  background-color: black;
+  --height: 5;
+  --width: 1;
 }
 
 .kaboom {
@@ -200,4 +162,4 @@ body {
 
 span.green {
   background: green;
-} */
+}
