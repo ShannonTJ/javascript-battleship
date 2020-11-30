@@ -123,10 +123,19 @@
   background-color: darkblue;
 }
 
-/* .square {
-  width: 40px;
-  height: 40px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: grey;
-} */
+.connected,
+.ready {
+  font-weight: normal;
+}
+
+.connected span,
+.ready span {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: red;
+}
+
+span.green {
+  background: green;
+}
