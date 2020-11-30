@@ -1,17 +1,66 @@
 body {
+  margin: 0;
+  background-color: #f3f3f3;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
   font-family: "Montserrat", sans-serif;
+  box-sizing: border-box;
 }
 
 .splash-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
 }
 
-.test {
+.splash-title {
   font-family: "Permanent Marker", cursive;
+  font-size: 10rem;
 }
 
-.container {
+.btn {
+  background-color: lightblue;
+  padding: 0.5em 1em;
+  outline: none;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0.2em;
+  color: #333;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: cadetblue;
+}
+
+.splash-btn {
+  font-size: 2rem;
+  margin-left: 2rem;
+}
+
+.splash-btn:first-child {
+  margin-left: 0;
+}
+
+.splash-battleship-image {
+  position: absolute;
+  bottom: 3vh;
+  left: 5vw;
+  max-width: 90%;
+  height: auto;
+  transform: rotateY(180deg);
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* .container {
   display: flex;
 }
 
@@ -151,4 +200,4 @@ body {
 
 span.green {
   background: green;
-}
+} */
