@@ -1,3 +1,16 @@
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+.splash-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.test {
+  font-family: "Permanent Marker", cursive;
+}
+
 .container {
   display: flex;
 }
