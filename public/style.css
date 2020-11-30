@@ -25,6 +25,7 @@ body {
 }
 
 .btn {
+  font-size: inherit;
   background-color: lightblue;
   padding: 0.5em 1em;
   outline: none;
@@ -137,6 +138,16 @@ body {
 .carrier-container-vertical {
   --height: 5;
   --width: 1;
+}
+
+.hidden-info {
+  font-size: 1.2rem;
+  align-items: center;
+  flex-direction: column;
+}
+
+.info-text {
+  margin: 1rem;
 }
 
 .kaboom {
