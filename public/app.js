@@ -19,8 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const userSquares = [];
   const computerSquares = [];
 
-  const socket = io();
-
   let isHorizontal = true;
   let selectedShipNameWithIndex;
   let draggedShip;
@@ -39,6 +37,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let cpuCruiserCount = 0;
   let cpuBattleshipCount = 0;
   let cpuCarrierCount = 0;
+
+  //SERVER VARIABLES
+  let gameMode = "";
+  let playerNum = 0;
+  let ready = false;
+  let enemyReady = false;
+  let allShipsPlaced = false;
+  let shotFired = -1;
+
+  //Get your player number
+  const socket = io();
+  socket.on("player-number", (num) => {
+    if (num === -1) {
+      infoDisplay.innerHTML = "Sorry the server is full";
+    } else {
+      playerNum = parseInt(num);
+      if (playerNum === 1) currentPlayer = "enemy";
+
+      console.log(playerNum);
+    }
+  });
 
   //EVENT LISTENERS
   rotateBtn.addEventListener("click", rotate);
