@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const socket = io();
     socket.on("player-number", (num) => {
       if (num === -1) {
-        infoDisplay.innerHTML = "Sorry the server is full";
+        infoDisplay.innerHTML = "Sorry the server is full"; //only 2 players allowed at a time
       } else {
         playerNum = parseInt(num);
         if (playerNum === 1) currentPlayer = "enemy";
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    //Ready button click
+    //Ready button click for multiplayer
     startBtn.addEventListener("click", () => {
       if (allShipsPlaced) playGameMulti(socket);
       else {
@@ -108,6 +108,30 @@ document.addEventListener("DOMContentLoaded", () => {
           infoDisplay.innerHTML = " ";
         }, 3000);
       }
+    });
+
+    //FIRING SHOTS IN MULTIPLAYER
+    computerSquares.forEach((square) => {
+      square.addEventListener("click", () => {
+        if (currentPlayer === "user" && ready && enemyReady) {
+          shotFired = square.dataset.id; //pass the clicked square number to the other player
+          socket.emit("fire", shotFired); //pass data to server
+        }
+      });
+    });
+
+    //RECEIVING SHOTS IN MULTIPLAYER
+    socket.on("fire", (id) => {
+      enemyTurn(id);
+      const square = userSquares[id]; //get the square from our grid
+      socket.emit("fire-reply", square.classList); //send square class info to the other player
+      playGameMulti(socket); //change whose turn it is
+    });
+
+    //RECEIVING SHOT REPLIES IN MULTIPLAYER
+    socket.on("fire-reply", (classList) => {
+      revealSquare(classList);
+      playGameMulti(socket); //switch current user
     });
 
     function playerConnectedOrDisconnected(num) {
@@ -372,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
             !square.classList.contains("kaboom") &&
             !square.classList.contains("sploosh")
           ) {
-            revealSquare(square);
+            revealSquare(square.classList);
           }
           //display an error message to the user
           else {
@@ -385,65 +409,87 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     } else {
       //computer logic
-      setTimeout(computerTurn, 700);
+      setTimeout(enemyTurn, 700);
     }
   }
 
-  function revealSquare(square) {
-    //game logic for user clicking on computer area
+  function revealSquare(classList) {
+    //look for the div with the data-id of shotFired
+    const enemySquare = computerGrid.querySelector(
+      `div[data-id='${shotFired}']`
+    );
+    //turn classList into an object to search values more easily
+    const obj = Object.values(classList);
 
+    //game logic for user clicking on computer area
     //when there's a hit, update a counter
-    if (square.classList.contains("destroyer")) destroyerCount++;
-    if (square.classList.contains("submarine")) submarineCount++;
-    if (square.classList.contains("cruiser")) cruiserCount++;
-    if (square.classList.contains("battleship")) battleshipCount++;
-    if (square.classList.contains("carrier")) carrierCount++;
+    if (
+      (!enemySquare.classList.contains("kaboom") ||
+        !enemySquare.classList.contains("sploosh")) &&
+      currentPlayer === "user" &&
+      !isGameOver
+    ) {
+      if (obj.includes("destroyer")) destroyerCount++;
+      if (obj.includes("submarine")) submarineCount++;
+      if (obj.includes("cruiser")) cruiserCount++;
+      if (obj.includes("battleship")) battleshipCount++;
+      if (obj.includes("carrier")) carrierCount++;
+    }
 
     //change square color when the user hits
-    if (square.classList.contains("taken")) {
-      square.classList.add("kaboom");
+    if (obj.includes("taken")) {
+      enemySquare.classList.add("kaboom");
     }
     //change square color when the user misses
     else {
-      square.classList.add("sploosh");
+      enemySquare.classList.add("sploosh");
     }
 
     checkForWins();
+
+    currentPlayer = "enemy";
+    turn.innerHTML = "Enemy's Turn";
+
     //computer turn begins
-    currentPlayer = "computer";
-    turn.innerHTML = "Computer's Turn";
-    playGameSingle();
+    if (gameMode === "singlePlayer") {
+      currentPlayer = "computer";
+      turn.innerHTML = "Computer's Turn";
+      playGameSingle();
+    }
   }
 
-  function computerTurn() {
-    //get a random index to hit
-    let random = Math.floor(Math.random() * userSquares.length);
+  function enemyTurn(square) {
+    //generate a random square to hit in single player mode
+    if (gameMode === "singlePlayer") {
+      //get a random index to hit
+      square = Math.floor(Math.random() * userSquares.length);
 
-    //computer should always choose a new square index
-    while (
-      userSquares[random].classList.contains("kaboom") ||
-      userSquares[random].classList.contains("sploosh")
-    ) {
-      random = Math.floor(Math.random() * userSquares.length);
+      //computer should always choose a new square index
+      while (
+        userSquares[square].classList.contains("kaboom") ||
+        userSquares[square].classList.contains("sploosh")
+      ) {
+        square = Math.floor(Math.random() * userSquares.length);
+      }
     }
 
     //if there is a hit on any boat, update the counters
-    if (userSquares[random].classList.contains("destroyer"))
+    if (userSquares[square].classList.contains("destroyer"))
       cpuDestroyerCount++;
-    if (userSquares[random].classList.contains("submarine"))
+    if (userSquares[square].classList.contains("submarine"))
       cpuSubmarineCount++;
-    if (userSquares[random].classList.contains("battleship"))
+    if (userSquares[square].classList.contains("battleship"))
       cpuBattleshipCount++;
-    if (userSquares[random].classList.contains("cruiser")) cpuCruiserCount++;
-    if (userSquares[random].classList.contains("carrier")) cpuCarrierCount++;
+    if (userSquares[square].classList.contains("cruiser")) cpuCruiserCount++;
+    if (userSquares[square].classList.contains("carrier")) cpuCarrierCount++;
 
     //change square color when the computer hits
-    if (userSquares[random].classList.contains("taken")) {
-      userSquares[random].classList.add("kaboom");
+    if (userSquares[square].classList.contains("taken")) {
+      userSquares[square].classList.add("kaboom");
     }
     //change square color when the computer misses
     else {
-      userSquares[random].classList.add("sploosh");
+      userSquares[square].classList.add("sploosh");
     }
 
     checkForWins();

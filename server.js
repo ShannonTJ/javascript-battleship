@@ -57,12 +57,28 @@ io.on("connection", (socket) => {
   //Check player connections
   socket.on("check-players", () => {
     const players = [];
-    //loop through connections
+    //Loop through connections
     for (const i in connections) {
       connections[i] == null
         ? players.push({ connected: false, ready: false })
         : players.push({ connected: true, ready: connections[i] }); //get ready status from the actual connection
     }
     socket.emit("check-players", players);
+  });
+
+  //On shot fired
+  socket.on("fire", (id) => {
+    console.log(`Shot fired from ${playerIndex}`, id);
+
+    //Emit the move to the other player
+    socket.broadcast.emit("fire", id);
+  });
+
+  //On shot reply
+  socket.on("fire-reply", (square) => {
+    console.log(square);
+
+    //Forward the reply to the other player
+    socket.broadcast.emit("fire-reply", square);
   });
 });
