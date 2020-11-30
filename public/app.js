@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const width = 10;
   const userSquares = [];
   const computerSquares = [];
+
+  const socket = io();
+
   let isHorizontal = true;
   let selectedShipNameWithIndex;
   let draggedShip;
