@@ -337,8 +337,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       //reach this loop if none of the squares are taken or out of bounds
       for (let i = 0; i < draggedShipLength; i++) {
+        let directionClass;
+        if (i === 0) directionClass = "start";
+        if (i === draggedShipLength - 1) directionClass = "end";
         horizontalCheck = parseInt(this.dataset.id) - selectedShipIndex + i;
-        userSquares[horizontalCheck].classList.add("taken", shipClass);
+        userSquares[horizontalCheck].classList.add(
+          "taken",
+          "horizontal",
+          directionClass,
+          shipClass
+        );
       }
     }
     //error checking for vertical ship placement
@@ -358,9 +366,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       //reach this loop if none of the squares are taken
       for (let i = 0; i < draggedShipLength; i++) {
+        let directionClass;
+        if (i === 0) directionClass = "start";
+        if (i === draggedShipLength - 1) directionClass = "end";
         verticalCheck =
           parseInt(this.dataset.id) - selectedShipIndex * width + i * width;
-        userSquares[verticalCheck].classList.add("taken", shipClass);
+        userSquares[verticalCheck].classList.add(
+          "taken",
+          "vertical",
+          directionClass,
+          shipClass
+        );
       }
     } else return;
     //if the ship placement passes all the error checking, remove it from the display grid
