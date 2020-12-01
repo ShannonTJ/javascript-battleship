@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rotateBtn = document.querySelector("#rotate");
   const turn = document.querySelector("#whose-turn");
   const infoDisplay = document.querySelector("#info");
+  const setupButtons = document.getElementById("setup-buttons");
 
   //VARIABLES
   const width = 10;
@@ -126,7 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("enemy-ready", (num) => {
       enemyReady = true; //set local variable
       playerReady(num); //pass player number to playerReady (toggle red to green)
-      if (ready) playGameMulti(socket); //start game if we are ready
+      if (ready) {
+        setupButtons.style.display = "none";
+        playGameMulti(socket); //start game if we are ready
+      }
     });
 
     //Check player status
@@ -201,10 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
     generate(shipArray[4]);
 
     startBtn.addEventListener("click", () => {
-      if (allShipsPlaced) playGameSingle();
-      else {
+      if (allShipsPlaced) {
+        setupButtons.style.display = "none";
+        playGameSingle();
+      } else {
         infoDisplay.innerHTML =
-          "Please place all ships, then press start to begin";
+          "Please place all of your ships, then press start to begin.";
         setTimeout(function () {
           infoDisplay.innerHTML = " ";
         }, 3000);

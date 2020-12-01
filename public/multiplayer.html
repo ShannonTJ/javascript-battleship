@@ -8,26 +8,25 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <script>let gameMode = "multiplayer";</script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="app.js" charset="UTF-8"></script>
 </head>
 
 <body>
-
-    <button id="singlePlayerButton">Single Player</button>
-    <button id="multiplayerButton">Multiplayer</button>
-
-    <div class="player p1">
-        Player 1
-        <div class="connected">Connected<span></span></div>
-        <div class="ready">Ready<span></span></div>
+    <div class="container">
+        <div class="player p1">
+            Player 1
+            <div class="connected">Connected<span></span></div>
+            <div class="ready">Ready<span></span></div>
+        </div>
+        <div class="player p2">
+            Player 2
+            <div class="connected">Connected<span></span></div>
+            <div class="ready">Ready<span></span></div>
+        </div>
     </div>
 
-    <div class="player p2">
-        Player 2
-        <div class="connected">Connected<span></span></div>
-        <div class="ready">Ready<span></span></div>
-    </div>
 
     <div class="container">
         <div class="grid grid-user"></div>

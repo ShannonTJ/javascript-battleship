@@ -227,12 +227,74 @@ body {
   margin: 1rem;
 }
 
-.kaboom {
+.kaboom,
+.sploosh {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kaboom::after,
+.sploosh::after {
+  content: "";
+  position: absolute;
+  border-radius: 100%;
+  width: 2vmin;
+  height: 2vmin;
+}
+
+.kaboom::after {
   background-color: red;
 }
 
-.sploosh {
-  background-color: darkblue;
+.sploosh::after {
+  background-color: white;
+}
+
+.sploosh::before {
+  content: "";
+  position: absolute;
+  animation: miss 0.2s ease-out forwards;
+  border: 1vmin solid white;
+  border-radius: 100%;
+  width: 2vmin;
+  height: 2vmin;
+}
+
+.grid-computer > .kaboom::before {
+  content: "";
+  position: absolute;
+  animation: miss 0.2s ease-out forwards;
+  border: 1vmin solid red;
+  border-radius: 100%;
+  width: 2vmin;
+  height: 2vmin;
+}
+
+.kaboom {
+  content: "";
+  animation: boom 0.2s ease-out forwards;
+}
+
+@keyframes miss {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+@keyframes boom {
+  0% {
+    background-color: red;
+  }
+  100% {
+    background-color: grey;
+  }
 }
 
 .connected,
