@@ -13,9 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const carrier = document.querySelector(".carrier-container");
   const startBtn = document.querySelector("#start");
   const rotateBtn = document.querySelector("#rotate");
-  const turn = document.querySelector("#whose-turn");
   const infoDisplay = document.querySelector("#info");
   const setupButtons = document.getElementById("setup-buttons");
+  const resetButton = document.querySelector("#reset");
+  const turn = document.querySelector("#whose-turn");
+  resetButton.style.display = "none";
 
   //VARIABLES
   const width = 10;
@@ -128,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
       enemyReady = true; //set local variable
       playerReady(num); //pass player number to playerReady (toggle red to green)
       if (ready) {
-        setupButtons.style.display = "none";
         playGameMulti(socket); //start game if we are ready
       }
     });
@@ -151,10 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Ready button click for multiplayer
     startBtn.addEventListener("click", () => {
-      if (allShipsPlaced) playGameMulti(socket);
-      else {
+      if (allShipsPlaced) {
+        setupButtons.style.display = "none";
+        playGameMulti(socket);
+      } else {
         infoDisplay.innerHTML =
-          "Please place all ships, then press start to begin";
+          "Please place all of your ships, then press start to begin";
         setTimeout(function () {
           infoDisplay.innerHTML = " ";
         }, 3000);
@@ -165,8 +168,18 @@ document.addEventListener("DOMContentLoaded", () => {
     computerSquares.forEach((square) => {
       square.addEventListener("click", () => {
         if (currentPlayer === "user" && ready && enemyReady) {
-          shotFired = square.dataset.id; //pass the clicked square number to the other player
-          socket.emit("fire", shotFired); //pass data to server
+          //check if the user already clicked on the square
+          if (
+            !square.classList.contains("kaboom") &&
+            !square.classList.contains("sploosh")
+          ) {
+            shotFired = square.dataset.id; //pass the clicked square number to the other player
+            socket.emit("fire", shotFired); //pass data to server
+          }
+          //display an error message to the user
+          else {
+            infoDisplay.innerHTML = "You've already clicked this square";
+          }
         }
       });
     });
@@ -187,9 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playerConnectedOrDisconnected(num) {
       let player = `.p${parseInt(num) + 1}`; //get p1 or p2
-      document
-        .querySelector(`${player} .connected span`)
-        .classList.toggle("green");
+      document.querySelector(`${player} .connected`).classList.toggle("active");
       if (parseInt(num) === playerNum)
         document.querySelector(player).style.fontWeight = "bold"; //indicates which player we are by making the font bold
     }
@@ -297,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
   }
   function dragLeave() {
-    console.log("drag leave");
+    //console.log("drag leave");
   }
 
   function dragDrop() {
@@ -392,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function dragEnd() {
-    console.log("dragend");
+    //console.log("dragend");
   }
 
   //GAME LOGIC FOR MULTIPLAYER
@@ -416,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function playerReady(num) {
     let player = `.p${parseInt(num) + 1}`;
-    document.querySelector(`${player} .ready span`).classList.toggle("green");
+    document.querySelector(`${player} .ready`).classList.toggle("active");
   }
 
   //GAME LOGIC FOR SINGLE PLAYER
@@ -426,6 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //player logic
     if (currentPlayer === "user") {
+      turn.innerHTML = "Your Turn";
       computerSquares.forEach((square) =>
         square.addEventListener("click", function (e) {
           //check if the user already clicked on the square
@@ -439,15 +451,12 @@ document.addEventListener("DOMContentLoaded", () => {
           //display an error message to the user
           else {
             infoDisplay.innerHTML = "You've already clicked this square";
-            setTimeout(function () {
-              infoDisplay.innerHTML = " ";
-            }, 3000);
           }
         })
       );
     } else {
       //computer logic
-      setTimeout(enemyTurn, 700);
+      setTimeout(enemyTurn, 500);
     }
   }
 
@@ -594,6 +603,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoDisplay.innerHTML = message;
 
+    let total =
+      destroyerCount +
+      submarineCount +
+      cruiserCount +
+      battleshipCount +
+      carrierCount;
+
+    let total1 =
+      cpuDestroyerCount +
+      cpuSubmarineCount +
+      cpuCruiserCount +
+      cpuBattleshipCount +
+      cpuCarrierCount;
+
+    console.log(total);
+    console.log(total1);
+
     if (
       destroyerCount +
         submarineCount +
@@ -602,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
         carrierCount ===
       50
     ) {
-      infoDisplay.innerHTML = "YOU WIN! Press start to play again";
+      infoDisplay.innerHTML = "YOU WIN! Press the button to play again";
       gameOver();
     }
 
@@ -614,15 +640,15 @@ document.addEventListener("DOMContentLoaded", () => {
         cpuCarrierCount ===
       50
     ) {
-      infoDisplay.innerHTML = "YOU LOSE. Press start to play again";
+      infoDisplay.innerHTML = "YOU LOSE. Press the button to play again";
       gameOver();
     }
   }
 
   function gameOver() {
     isGameOver = true;
-    startBtn.removeEventListener("click", playGameSingle);
-    startBtn.addEventListener("click", function () {
+    resetButton.style.display = "block";
+    resetButton.addEventListener("click", function () {
       location.reload();
     });
   }
